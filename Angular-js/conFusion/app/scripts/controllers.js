@@ -7,8 +7,19 @@ angular.module('confusionApp')
                 $scope.tab = 1;
                 $scope.filtText = '';
                 $scope.showDetails = false;
-
-                $scope.dishes = menuFactory.getDishes();
+                $scope.showMenu = false;
+                $scope.message = "Loading ...";
+                $scope.dishes = {};
+                menuFactory.getDishes()
+                        .then(
+                                function (response) {
+                                    $scope.dishes = response.data;
+                                    $scope.showMenu = true;
+                                },
+                                function (response) {
+                                    $scope.message = "Error: " + response.status + " " + response.statusText;
+                                }
+                        );
 
                 $scope.select = function (setTab) {
                     $scope.tab = setTab;
@@ -83,8 +94,19 @@ angular.module('confusionApp')
 
         //Reconfiguring to use Angular UI-Router
         .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', function ($scope, $stateParams, menuFactory) {
-                var dish = menuFactory.getDish(parseInt($stateParams.id, 10));
-                $scope.dish = dish;
+                $scope.dish = {};
+                $scope.showDish = false;
+                $scope.message = "Loading ...";
+                menuFactory.getDish(parseInt($stateParams.id, 10))
+                        .then(
+                                function (response) {
+                                    $scope.dish = response.data;
+                                    $scope.showDish = true;
+                                },
+                                function (response) {
+                                    $scope.message = "Error: " + response.status + " " + response.statusText;
+                                }
+                        );
             }])
 
         .controller('DishCommentController', ['$scope', function ($scope) {
@@ -108,27 +130,39 @@ angular.module('confusionApp')
                     $scope.newComment = {rating: '5', comment: '', author: '', date: ''};
                 }
             }])
-        
+
         // implement the IndexController and AboutController here
         .controller('IndexController', ['$scope', '$stateParams', 'menuFactory', 'corporateFactory', function ($scope, $stateParams, menuFactory, corporateFactory) {
                 var dish_id = $stateParams.dish_id; //getting dish_id 
                 var leader_id = $stateParams.leader_id; //getting leader_id
                 var promotion_id = $stateParams.promotion_id; //getting promotion_id
-                
-                var dish = menuFactory.getDish(dish_id);
-                $scope.dish = dish;
-                
+
+                $scope.dish = {};
+                $scope.showDish = false;
+                $scope.message = "Loading ...";
+
+                menuFactory.getDish(dish_id)
+                        .then(
+                                function (response) {
+                                    $scope.dish = response.data;
+                                    $scope.showDish = true;
+                                },
+                                function (response) {
+                                    $scope.message = "Error: " + response.status + " " + response.statusText;
+                                }
+                        );
+
                 var promotion = menuFactory.getPromotion(promotion_id);
                 $scope.promotion = promotion;
-                
+
                 var leader = corporateFactory.getLeader(leader_id);
                 $scope.leader = leader;
-             }])
- 
+            }])
+
         .controller('AboutController', ['$scope', '$stateParams', 'corporateFactory', function ($scope, $stateParams, corporateFactory) {
                 $scope.leaders = corporateFactory.getLeaders();
                 var leader = corporateFactory.getLeader(parseInt($stateParams.id, 10));
                 $scope.leader = leader;
-             }])
+            }])
         ;
 
