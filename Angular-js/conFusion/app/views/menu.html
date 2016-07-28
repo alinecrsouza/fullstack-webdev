@@ -1,0 +1,71 @@
+<div class="container">        
+    <!-- attaching the Controller and creating an alias -->
+    <div class="row row-content" ng-controller="MenuController">            
+        <div class="col-xs-12">
+            <!-- Setting up Tabbed Navigation for the Menu -->
+            <!-- Whenever the user clicks on a tab, we need to activate that
+            tab. To do this, we take the help of the ng-click directive. -->
+            <button ng-click="toggleDetails()" class="btn btn-xs btn-primary pull-right" type="button">
+                {{showDetails ? 'Hide Details':'Show Details'}}
+            </button>  
+            <ul class="nav nav-tabs" role="tablist">
+                <!-- We take the help of the ng-class directive in order to
+                add the Bootstrap active class to the selected tab. Note 
+                that for each of the <li> elements, we introduced the 
+                ng-class="{active:menuCtrl.isSelected(i)}" directive. 
+                This directive will apply the active class to that element,
+                if the function on the right (that specifies a condition) 
+                evaluates to true.-->
+                <li role="presentation"
+                    ng-class="{active:isSelected(1)}">
+                    <a ng-click="select(1)"
+                       aria-controls="all menu"
+                       role="tab">The Menu</a></li>
+                <li role="presentation"
+                    ng-class="{active:isSelected(2)}">
+                    <a ng-click="select(2)"
+                       aria-controls="appetizers"
+                       role="tab">Appetizers</a></li>
+                <li role="presentation"
+                    ng-class="{active:isSelected(3)}">
+                    <a ng-click="select(3)"
+                       aria-controls="mains"
+                       role="tab">Mains</a></li>
+                <li role="presentation"
+                    ng-class="{active:isSelected(4)}">
+                    <a  ng-click="select(4)"
+                        aria-controls="desserts"
+                        role="tab">Desserts</a></li>
+            </ul>
+            <!-- create a list of media objects so that the menu can be 
+            displayed on the page constructed from the JavaScript object 
+            array. We take the help of the ng-repeat directive for this. -->
+            <!-- encloses the entire menu construction inside a tab pane -->
+            <div class="tab-content">
+                <ul class="media-list tab-pane fade in active">
+                    <!-- We take the help of the Angular filter to select only 
+                    those items from the menu corresponding to each tab. The 
+                    filter will use the variable filtText from the menucontroller 
+                    to filter the items from the dishes array. -->
+                    <li class="media" ng-repeat="dish in dishes| filter:filtText">
+                        <div class="media-left media-middle">
+                            <!-- using Angular-Route
+                            <a ng-href="#/menu/{{dish._id}}">-->
+                            <!-- using Angular UI-Router-->
+                            <a ui-sref="app.dishdetails({id: dish._id})">
+                                <img class="media-object img-thumbnail"
+                                     ng-src={{dish.image}} alt="Uthappizza">
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            <h2 class="media-heading">{{dish.name}}
+                                <span class="label label-danger">{{dish.label}}</span>
+                                <span class="badge">{{dish.price| currency}}</span></h2>
+                            <p ng-show="showDetails">{{dish.description}}</p>                         
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>            
+    </div>
+</div> 
